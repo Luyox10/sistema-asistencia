@@ -1,0 +1,43 @@
+# Entornos y secretos
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+env/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage/
+htmlcov/
+
+# Node
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Scripts temporales internos (prefijo _)
+backend/scripts/_*.py
+
+# Modelos y datos (descomentar si no deben versionarse)
+# backend/models/*.keras
+# data/*.csv
+
+# Temporales y SO
+*.log
+*.tmp
+tmp/
+uploads/
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.suo
+*.sw?

@@ -1,0 +1,21 @@
+{
+  "archivo_modelo": "modelo_asistencia.keras",
+  "keras_version_guardado": "3.13.2",
+  "arquitectura": "Sequential",
+  "capas": [
+    {"tipo": "Input", "batch_shape": [null, 7, 1]},
+    {"tipo": "LSTM", "units": 64, "activation": "tanh", "return_sequences": false},
+    {"tipo": "Dropout", "rate": 0.2},
+    {"tipo": "Dense", "units": 32, "activation": "relu"},
+    {"tipo": "Dense", "units": 1, "activation": "sigmoid"}
+  ],
+  "input_shape": [7, 1],
+  "ventana": 7,
+  "features": ["attendance_status"],
+  "salida": "probabilidad_asistencia",
+  "activacion_salida": "sigmoid",
+  "umbral": 0.5,
+  "parametros_totales": 57029,
+  "parametros_entrenables": 19009,
+  "preprocesamiento": "Secuencia binaria de attendance_status (0/1) de las ultimas 7 sesiones previas ordenadas por fecha; reshape a (1, 7, 1) float32. Sin escalado adicional."
+}

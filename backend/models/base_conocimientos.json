@@ -1,0 +1,114 @@
+{
+  "descripcion": "Base de conocimientos del sistema experto hibrido para prediccion de asistencia estudiantil. Reglas IF-THEN evaluadas en orden de prioridad (la primera que cumple todas sus condiciones define la conclusion; todas las reglas activadas se reportan para explicabilidad).",
+  "hechos": {
+    "probabilidad": "Probabilidad de asistencia a la proxima sesion segun el modelo LSTM (0..1).",
+    "ausencias_ultimas": "Numero de inasistencias (0) dentro de la ventana de las ultimas 7 sesiones.",
+    "racha_ausencias": "Inasistencias consecutivas al final de la ventana (mas recientes).",
+    "tendencia": "Comparacion de la tasa de asistencia entre la primera y la segunda mitad de la ventana: empeorando | estable | mejorando.",
+    "porcentaje_asistencia": "Proporcion de asistencias dentro de la ventana (0..1)."
+  },
+  "reglas": [
+    {
+      "id": "R1",
+      "descripcion": "IF racha_ausencias >= 3 THEN riesgo alto / no asiste / alerta",
+      "condiciones": [
+        {"campo": "racha_ausencias", "operador": ">=", "valor": 3}
+      ],
+      "conclusion": {
+        "nivel_riesgo": "alto",
+        "alerta": true,
+        "etiqueta": "no asiste",
+        "recomendacion": "Racha de 3 o mas inasistencias consecutivas: contactar al estudiante y notificar al tutor academico."
+      }
+    },
+    {
+      "id": "R2",
+      "descripcion": "IF probabilidad < 0.3 THEN riesgo alto / no asiste / alerta",
+      "condiciones": [
+        {"campo": "probabilidad", "operador": "<", "valor": 0.3}
+      ],
+      "conclusion": {
+        "nivel_riesgo": "alto",
+        "alerta": true,
+        "etiqueta": "no asiste",
+        "recomendacion": "El modelo estima menos del 30% de probabilidad de asistencia: generar alerta temprana y contactar al estudiante."
+      }
+    },
+    {
+      "id": "R3",
+      "descripcion": "IF ausencias_ultimas >= 5 THEN riesgo alto / no asiste / alerta",
+      "condiciones": [
+        {"campo": "ausencias_ultimas", "operador": ">=", "valor": 5}
+      ],
+      "conclusion": {
+        "nivel_riesgo": "alto",
+        "alerta": true,
+        "etiqueta": "no asiste",
+        "recomendacion": "5 o mas inasistencias en las ultimas 7 sesiones: riesgo severo de desercion en el curso."
+      }
+    },
+    {
+      "id": "R4",
+      "descripcion": "IF probabilidad < 0.5 THEN riesgo medio / probable asistencia / alerta",
+      "condiciones": [
+        {"campo": "probabilidad", "operador": "<", "valor": 0.5}
+      ],
+      "conclusion": {
+        "nivel_riesgo": "medio",
+        "alerta": true,
+        "etiqueta": "probable asistencia",
+        "recomendacion": "Probabilidad de asistencia por debajo del umbral (0.5): monitoreo preventivo recomendado."
+      }
+    },
+    {
+      "id": "R5",
+      "descripcion": "IF racha_ausencias >= 2 THEN riesgo medio / probable asistencia / alerta",
+      "condiciones": [
+        {"campo": "racha_ausencias", "operador": ">=", "valor": 2}
+      ],
+      "conclusion": {
+        "nivel_riesgo": "medio",
+        "alerta": true,
+        "etiqueta": "probable asistencia",
+        "recomendacion": "Dos inasistencias consecutivas recientes: observar evolucion y considerar seguimiento preventivo."
+      }
+    },
+    {
+      "id": "R6",
+      "descripcion": "IF ausencias_ultimas >= 3 THEN riesgo medio / probable asistencia / alerta",
+      "condiciones": [
+        {"campo": "ausencias_ultimas", "operador": ">=", "valor": 3}
+      ],
+      "conclusion": {
+        "nivel_riesgo": "medio",
+        "alerta": true,
+        "etiqueta": "probable asistencia",
+        "recomendacion": "3 o mas inasistencias en la ventana reciente: patron irregular, mantener seguimiento."
+      }
+    },
+    {
+      "id": "R7",
+      "descripcion": "IF tendencia == empeorando THEN riesgo medio / probable asistencia / alerta",
+      "condiciones": [
+        {"campo": "tendencia", "operador": "==", "valor": "empeorando"}
+      ],
+      "conclusion": {
+        "nivel_riesgo": "medio",
+        "alerta": true,
+        "etiqueta": "probable asistencia",
+        "recomendacion": "La tasa de asistencia cae en las sesiones mas recientes: vigilar posible deterioro."
+      }
+    },
+    {
+      "id": "R8",
+      "descripcion": "ELSE THEN riesgo bajo / asiste / sin alerta (regla por defecto)",
+      "condiciones": [],
+      "conclusion": {
+        "nivel_riesgo": "bajo",
+        "alerta": false,
+        "etiqueta": "asiste",
+        "recomendacion": "Sin factores de riesgo detectados: continuar con el monitoreo habitual."
+      }
+    }
+  ]
+}
